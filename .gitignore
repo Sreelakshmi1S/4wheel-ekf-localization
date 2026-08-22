@@ -1,0 +1,22 @@
+# ROS2 / colcon
+build/
+install/
+log/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Editor / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Logged data / large outputs (add exceptions as needed once you have real results)
+*.bag
+*.db3
+*.csv
+!analysis/sample_data/*.csv
