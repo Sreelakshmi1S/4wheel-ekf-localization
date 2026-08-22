@@ -27,12 +27,14 @@ odometry-only localization, and compare EKF vs. UKF behavior on the same data.
 
 | Component | Role | Package |
 |---|---|---|
-| Wheel odometry | Continuous local motion estimate | Gazebo differential/skid-steer plugin via `ros_gz` |
+| Wheel odometry | Continuous local motion estimate | Gazebo differential drive plugin(s) via `ros_gz` |
 | IMU | High-rate orientation correction | Gazebo IMU sensor plugin |
-| Camera + ArUco markers | Absolute pose correction (anchors the drift) | [`ros2_aruco`](https://github.com/JMU-ROBOTICS-VIVA/ros2_aruco) or [`aruco_opencv`](https://github.com/fictionlab/ros_aruco_opencv) |
+| Camera calibration | Recovering intrinsics/distortion from the simulated camera | ROS2 `camera_calibration` (`image_pipeline`) |
+| Camera + ArUco markers | Absolute pose correction (anchors the drift) | [`ros2_aruco`](https://github.com/JMU-ROBOTICS-VIVA/ros2_aruco) |
 | Sensor fusion | EKF / UKF state estimation | [`robot_localization`](https://github.com/cra-ros-pkg/robot_localization) |
-| Simulation | Physics, sensors, ground truth | Gazebo (modern, via `ros_gz_bridge`) |
+| Simulation | Physics, sensors, ground truth | Gazebo Harmonic (via `ros_gz_bridge`) |
 | Integration nodes | Bridging marker detections into `robot_localization`'s expected input, custom odometry handling | Custom C++ (`localization_cpp/`) |
+| Multi-camera fusion (stretch) | Handing off marker corrections between multiple fixed cameras | Extension of `localization_cpp/` |
 
 The filter math itself uses the field-standard `robot_localization` package rather
 than a from-scratch reimplementation — the goal of this project is demonstrating
@@ -46,13 +48,25 @@ a black box.
 
 ```
 4wheel-ekf-localization/
-├── robot_description/     # URDF/Xacro: 4-wheel robot, camera, IMU
-├── gazebo_sim/             # World file, ArUco marker models, launch files
-├── localization_cpp/       # Custom C++ ROS2 nodes (bridge/integration logic)
-├── ekf_config/              # robot_localization EKF/UKF parameter YAMLs
-├── analysis/                 # Trajectory evaluation, RMSE, EKF-vs-UKF plots
-└── docs/                      # Results write-up, plots, findings
+├── robot_description/       # URDF/Xacro: 4-wheel robot, camera, IMU
+├── gazebo_sim/                # World file, ArUco marker models, launch files
+├── camera_calibration/         # Simulated camera calibration (distortion recovery)
+├── localization_cpp/            # Custom C++ ROS2 nodes (bridge/integration logic)
+├── ekf_config/                    # robot_localization EKF/UKF parameter YAMLs
+├── analysis/                        # Trajectory evaluation, RMSE, EKF-vs-UKF plots
+└── docs/                              # Project plan, results write-up, plots, findings
 ```
+
+## Attribution
+
+The Stage 1 robot/world setup follows the structure taught in the
+[MOGI-ROS Week-3-4-Gazebo-basics](https://github.com/MOGI-ROS/Week-3-4-Gazebo-basics)
+course material (Apache-2.0, public teaching material) — package naming,
+robot dimensions, and inertia values here are my own rather than the
+tutorial's example figures. Everything from sensor fusion onward (camera
+calibration, ArUco-corrected EKF/UKF, evaluation) is original integration
+work not covered by that or any single tutorial. Full breakdown in
+[`docs/project-plan.md`](docs/project-plan.md).
 
 ## Tech Stack
 
@@ -64,15 +78,20 @@ a black box.
 ## Roadmap
 
 - [ ] Stage 1 — URDF for 4-wheeled robot + camera + IMU, spawn and drive in Gazebo
-- [ ] Stage 2 — ArUco markers placed in world; verify marker pose detection
-- [ ] Stage 3 — `robot_localization` EKF configured, fusing odom + IMU + marker poses; custom C++ bridge node
-- [ ] Stage 4 — UKF comparison run
-- [ ] Stage 5 — Evaluation: ground truth vs. odom-only vs. EKF vs. UKF trajectories, RMSE, write-up in `docs/`
+- [ ] Stage 2 — IMU and camera sensors verified publishing on the robot
+- [ ] Stage 3 — Camera calibration: recover distortion coefficients from the simulated camera
+- [ ] Stage 4 — ArUco markers placed in world; verify marker pose detection
+- [ ] Stage 5 — `robot_localization` EKF configured, fusing odom + IMU + marker poses; custom C++ bridge node
+- [ ] Stage 6 — UKF comparison run
+- [ ] Stage 7 — Evaluation: ground truth vs. odom-only vs. EKF vs. UKF trajectories, RMSE, write-up in `docs/`
+- [ ] Stage 8 (stretch) — Multi-camera localization
+
+Full detail on each stage, including "done when" criteria and resources: [`docs/project-plan.md`](docs/project-plan.md).
 
 ## Results
 
 _Coming soon — trajectory plots and drift-reduction numbers will be added here
-once Stage 5 is complete._
+once Stage 7 is complete._
 
 ## Background
 
