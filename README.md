@@ -24,7 +24,7 @@ odometry-only localization, and compare EKF vs. UKF behavior on the same data.
 ## Tech Stack
 
 - ROS2 Humble (Ubuntu 22.04)
-- Gazebo Fortress via `ros_gz`
+- Gazebo Fortress
 - C++ (custom nodes) / Python (analysis & evaluation scripts)
 - `robot_localization`, `ros2_aruco` / `aruco_opencv`
 
