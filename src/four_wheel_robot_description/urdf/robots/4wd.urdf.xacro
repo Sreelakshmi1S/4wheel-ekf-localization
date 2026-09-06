@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<!--
+  Adapted from Linorobot2:
+  https://github.com/linorobot/linorobot2
+  Licensed under the Apache License 2.0.
+-->
+<robot name="four_wheel_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Robot dimensions and physical properties -->
+  <xacro:include
+    filename="$(find four_wheel_robot_description)/urdf/4wd_properties.urdf.xacro" />
+
+  <!-- Mechanical components -->
+  <xacro:include
+    filename="$(find four_wheel_robot_description)/urdf/mech/base.urdf.xacro" />
+
+  <xacro:include
+    filename="$(find four_wheel_robot_description)/urdf/mech/wheel.urdf.xacro" />
+
+  <!-- Main base -->
+  <xacro:base
+    length="${base_length}"
+    width="${base_width}"
+    height="${base_height}"
+    mass="${base_mass}"
+    wheel_radius="${wheel_radius}"
+    wheel_pos_z="${wheel_pos_z}"
+  />
+
+  <!-- Front-left wheel -->
+  <xacro:wheel
+    side="front_left"
+    radius="${wheel_radius}"
+    width="${wheel_width}"
+    pos_x="${wheel_pos_x}"
+    pos_y="${wheel_pos_y}"
+    pos_z="${wheel_pos_z}"
+    mass="${wheel_mass}"
+  />
+
+  <!-- Front-right wheel -->
+  <xacro:wheel
+    side="front_right"
+    radius="${wheel_radius}"
+    width="${wheel_width}"
+    pos_x="${wheel_pos_x}"
+    pos_y="${-wheel_pos_y}"
+    pos_z="${wheel_pos_z}"
+    mass="${wheel_mass}"
+  />
+
+  <!-- Rear-left wheel -->
+  <xacro:wheel
+    side="rear_left"
+    radius="${wheel_radius}"
+    width="${wheel_width}"
+    pos_x="${-wheel_pos_x}"
+    pos_y="${wheel_pos_y}"
+    pos_z="${wheel_pos_z}"
+    mass="${wheel_mass}"
+  />
+
+  <!-- Rear-right wheel -->
+  <xacro:wheel
+    side="rear_right"
+    radius="${wheel_radius}"
+    width="${wheel_width}"
+    pos_x="${-wheel_pos_x}"
+    pos_y="${-wheel_pos_y}"
+    pos_z="${wheel_pos_z}"
+    mass="${wheel_mass}"
+  />
+
+</robot>
