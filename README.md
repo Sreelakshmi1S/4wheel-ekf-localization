@@ -1,66 +1,73 @@
-# Multi-Sensor Localization of a 4-Wheeled Mobile Robot (ROS2 + Gazebo)
+# Four-Wheel Robot Localization and SLAM
 
-Fusing wheel odometry, IMU, and camera-based fiducial (ArUco) localization with an
-Extended/Unscented Kalman Filter, benchmarked against ground truth in simulation.
+> **Status:** Work in progress  
+> **Environment:** ROS 2 Humble, Gazebo Fortress, Ubuntu 22.04
 
-## Problem Statement
+A simulation project for exploring localization, sensor fusion, and SLAM with a four-wheel skid-steer robot.
 
-Wheel odometry and IMU-only localization drift over time — small errors in wheel slip,
-encoder noise, and IMU bias accumulate without bound. This project builds a 4-wheeled
-mobile robot in Gazebo and corrects that drift by fusing:
+The robot model will be adapted from Linorobot2 for Gazebo Fortress. Existing ROS 2 packages will provide standard infrastructure, while the core localization and evaluation components will be implemented in C++.
 
-- **Wheel odometry** — fast, local, but drifts over time.
-- **IMU** — high-frequency orientation/angular velocity, but biased and noisy.
-- **Camera-based fiducial localization** — ArUco markers at known world positions,
-  giving sparse but absolute (non-drifting) pose corrections.
+## Goals
 
-These sources are fused using `robot_localization`'s EKF (and, as a comparison, its
-UKF) to produce a single filtered pose estimate, evaluated against Gazebo's
-ground-truth pose over a driven trajectory.
+- Simulate a four-wheel robot with wheel encoders, IMU, camera, and 2D LiDAR.
+- Implement wheel odometry in C++.
+- Fuse odometry, IMU, and ArUco observations using EKF and UKF.
+- Implement and test a custom planar EKF in C++.
+- Compare the custom estimator with `robot_localization`.
+- Integrate SLAM Toolbox for LiDAR SLAM.
+- Evaluate estimates against Gazebo ground truth.
 
-**Goal:** quantify how much the fused estimate reduces drift compared to
-odometry-only localization, and compare EKF vs. UKF behavior on the same data.
+## Planned Experiments
 
-## Tech Stack
+The estimators will be tested using repeatable trajectories under:
 
-- ROS2 Humble (Ubuntu 22.04)
-- Gazebo Fortress
-- C++ (custom nodes) / Python (analysis & evaluation scripts)
-- `robot_localization`, `ros2_aruco` / `aruco_opencv`
+- wheel slip and encoder noise;
+- IMU noise and bias;
+- missing fiducial observations;
+- measurement outliers;
+- sensor delays and dropouts.
 
-## Repository Structure
+Evaluation will include position error, heading error, final drift, and recovery after absolute pose corrections.
 
-```
-4wheel-ekf-localization/
-├── robot_description/    # URDF/Xacro: 4-wheel robot, camera, IMU
-├── gazebo_sim/           # World file, ArUco marker models, launch files
-├── camera_calibration/   # Simulated camera calibration (distortion recovery)
-├── localization_cpp/     # Custom C++ ROS2 nodes (bridge/integration logic)
-├── ekf_config/           # robot_localization EKF/UKF parameter YAMLs
-├── analysis/             # Trajectory evaluation, RMSE, EKF-vs-UKF plots
-└── docs/                 # Environment setup, project notes, findings
-```
+## Technology
 
-## Build Log
+- ROS 2 Humble
+- Gazebo Fortress and `ros_gz`
+- C++17 and Eigen
+- Python for analysis and plotting
+- `robot_localization`
+- SLAM Toolbox
+- Nav2
+- ArUco or AprilTag detection
 
-Working through this one concrete step at a time rather than a fixed upfront plan —
-each step below only gets added once the previous one is actually working.
+## Progress
 
-- [x] **Step 1 — Robot appears in Gazebo.** 4-wheel skid-steer URDF/xacro, spawned
-      into an empty Gazebo Fortress world via `ros2 launch gazebo_sim
-      spawn_robot.launch.py`.
-- [ ] **Step 2 — Drive it.** Send `/cmd_vel` commands (one-off `ros2 topic pub` and
-      `teleop_twist_keyboard`) and confirm forward/backward/turn-in-place all work,
-      and that `/odom` publishes sane values.
-- [ ] **Step 3 — TBD**, decided once Step 2 is confirmed working.
+- [X] Adapt a four-wheel Linorobot2 model for Gazebo Fortress
+- [ ] Validate driving, joint states, TF, and wheel odometry
+- [ ] Add IMU, camera, LiDAR, and ground truth
+- [ ] Implement custom wheel odometry in C++
+- [ ] Implement fiducial-based global localization in C++
+- [ ] Configure `robot_localization` EKF and UKF
+- [ ] Implement and test a custom planar EKF in C++
+- [ ] Integrate SLAM Toolbox and Nav2
+- [ ] Run controlled experiments and publish results
+
+## Reuse and Attribution
+
+The robot description and selected simulation assets are adapted from
+[Linorobot2](https://github.com/linorobot/linorobot2).
+
+Third-party components retain their original licences and attribution. Reused
+files and modifications will be documented separately.
 
 ## Background
 
-Built as an independent project extending localization/SLAM/state-estimation (EKF,
-UKF, camera calibration) work from my M.Sc. coursework at the University of
-Stuttgart into a full ROS2 + Gazebo system, and as hands-on practice with C++ in a
-ROS2 context alongside my Python-based research work at Fraunhofer IPA.
+This project extends my M.Sc. work in state estimation, localization, SLAM,
+and camera calibration into a complete ROS 2 simulation. It also serves as a
+practical demonstration of C++, ROS 2 integration, testing, and quantitative
+validation.
 
 ## Author
 
-Sreelakshmi Sujatha — LinkedIn · GitHub
+Sreelakshmi Sujatha
+
