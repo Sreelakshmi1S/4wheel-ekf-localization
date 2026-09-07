@@ -21,6 +21,12 @@ def generate_launch_description():
         value_type=str,
     )
 
+    rviz_config = PathJoinSubstitution([
+        FindPackageShare("four_wheel_robot_description"),
+        "rviz",
+        "display.rviz",
+    ])
+
     return LaunchDescription([
         Node(
             package="robot_state_publisher",
@@ -44,5 +50,6 @@ def generate_launch_description():
             executable="rviz2",
             name="rviz2",
             output="screen",
+            arguments=["-d", rviz_config],
         ),
     ])
