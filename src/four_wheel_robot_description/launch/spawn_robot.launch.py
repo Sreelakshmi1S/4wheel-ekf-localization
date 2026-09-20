@@ -57,27 +57,28 @@ def generate_launch_description():
             "-name",
             "four_wheel_robot",
             "-z",
-            "0.1",
+            "0.05",
         ],
     )
 
-    # Gazebo -> ROS bridge for simulation time.
+    # Bridge simulation time, velocity commands, joint states, and
+    # Gazebo drivetrain odometry.
     bridge = Node(
         package="ros_gz_bridge",
         executable="parameter_bridge",
-        name="clock_bridge",
+        name="simulation_bridge",
         output="screen",
         arguments=[
             "/clock@rosgraph_msgs/msg/Clock[ignition.msgs.Clock",
+            "/cmd_vel@geometry_msgs/msg/Twist]ignition.msgs.Twist",
+            "/joint_states@sensor_msgs/msg/JointState[ignition.msgs.Model",
+            "/gazebo/odom@nav_msgs/msg/Odometry[ignition.msgs.Odometry",
         ],
     )
 
-    return LaunchDescription(
-        [
+    return LaunchDescription([
             gz_sim,
             robot_state_publisher,
             spawn_robot,
-            bridge,
-        ]
-    )
+            bridge,])
 
