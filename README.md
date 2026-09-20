@@ -43,8 +43,8 @@ Evaluation will include position error, heading error, final drift, and recovery
 ## Progress
 
 - [X] Adapt a four-wheel Linorobot2 model for Gazebo Fortress
-- [X] Validate driving, joint states, TF, and wheel odometry
-- [ ] Add IMU, camera, LiDAR, and ground truth
+- [X] Validate driving, joint states, TF, and Gazebo drivetrain odometry
+- [0] Add IMU, camera, LiDAR, and ground truth
 - [ ] Implement custom wheel odometry in C++
 - [ ] Implement fiducial-based global localization in C++
 - [ ] Configure `robot_localization` EKF and UKF
